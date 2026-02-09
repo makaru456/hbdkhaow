@@ -1,11 +1,288 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>HBD Khaow 🎂</title>
+<meta charset="UTF-8">
+<title>Happy Birthday 💖</title>
+
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+    font-family:'Segoe UI',sans-serif;
+    overflow:hidden;
+}
+.box{
+    width:360px;
+    padding:25px;
+    text-align:center;
+    border-radius:25px;
+    background:rgba(255,255,255,.25);
+    backdrop-filter:blur(15px);
+    box-shadow:0 25px 50px rgba(0,0,0,.25);
+}
+.hidden{display:none}
+
+/* ---------- LOCK ---------- */
+.display{
+    width:100%;
+    height:45px;
+    background:white;
+    border-radius:20px;
+    margin-bottom:15px;
+    font-size:20px;
+    line-height:45px;
+    letter-spacing:4px;
+}
+.keypad{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+.keypad button{
+    padding:15px;
+    font-size:18px;
+    border:none;
+    border-radius:15px;
+    background:#ff2e63;
+    color:white;
+    cursor:pointer;
+}
+.keypad .clear{background:#999}
+.keypad .ok{grid-column:span 3;background:#28c76f}
+
+/* ---------- CAKE ---------- */
+.cake-wrap{
+    margin:30px auto;
+    width:220px;
+    height:160px;
+    position:relative;
+}
+.cake-top{
+    width:220px;
+    height:50px;
+    background:#ffd1dc;
+    border-radius:50%;
+    position:absolute;
+    top:0;
+    z-index:3;
+}
+.cake-front{
+    width:220px;
+    height:100px;
+    background:#ff9eb5;
+    position:absolute;
+    top:25px;
+    border-radius:0 0 20px 20px;
+    z-index:2;
+}
+.cake-shadow{
+    width:220px;
+    height:30px;
+    background:#e07a94;
+    position:absolute;
+    bottom:0;
+    border-radius:50%;
+    z-index:1;
+}
+
+/* ---------- CANDLE ---------- */
+.candle{
+    width:10px;
+    height:30px;
+    background:white;
+    position:absolute;
+    top:-25px;
+    cursor:pointer;
+}
+.flame{
+    width:10px;
+    height:10px;
+    background:orange;
+    border-radius:50%;
+    position:absolute;
+    top:-10px;
+    animation:flicker .4s infinite alternate;
+}
+@keyframes flicker{
+    from{transform:scale(1);}
+    to{transform:scale(1.4);}
+}
+
+/* ---------- LOVE ---------- */
+img{
+    width:150px;
+    height:150px;
+    border-radius:50%;
+    object-fit:cover;
+    border:5px solid white;
+}
+#text{
+    min-height:160px;
+    font-size:18px;
+    line-height:1.6;
+}
+
+.heart{
+    position:absolute;
+    font-size:22px;
+    animation:float 6s linear forwards;
+}
+@keyframes float{
+    from{transform:translateY(0);opacity:1;}
+    to{transform:translateY(-700px);opacity:0;}
+}
+</style>
 </head>
+
 <body>
-  <h1>🎉 Happy Birthday Khaow 🎉</h1>
-  <p>เว็บนี้ขึ้นแล้วนะ!</p>
+
+<!-- LOCK -->
+<div class="box" id="lock">
+    <h2>🔐 ใส่รหัสลับ</h2>
+    <div class="display" id="display"></div>
+    <div class="keypad">
+        <button onclick="add('1')">1</button>
+        <button onclick="add('2')">2</button>
+        <button onclick="add('3')">3</button>
+        <button onclick="add('4')">4</button>
+        <button onclick="add('5')">5</button>
+        <button onclick="add('6')">6</button>
+        <button onclick="add('7')">7</button>
+        <button onclick="add('8')">8</button>
+        <button onclick="add('9')">9</button>
+        <button class="clear" onclick="clearPass()">C</button>
+        <button onclick="add('0')">0</button>
+        <button class="clear" onclick="del()">←</button>
+        <button class="ok" onclick="check()">OK</button>
+    </div>
+</div>
+
+<!-- CAKE -->
+<div class="box hidden" id="cakePage">
+    <h2>🎂 เค้กของเธอ</h2>
+    <p>ปักเทียนให้ครบ 5 ดอก</p>
+    <div class="cake-wrap" id="cake">
+        <div class="cake-top"></div>
+        <div class="cake-front"></div>
+        <div class="cake-shadow"></div>
+    </div>
+</div>
+
+<!-- LOVE -->
+<div class="box hidden" id="lovePage">
+    <img src="yourlove.jpg">
+    <h2>🎉 Happy Birthday 🎉</h2>
+    <div id="text"></div>
+</div>
+
+<script>
+/* PASSWORD */
+const correctPassword = "11";
+let input = "";
+
+function add(n){
+    if(input.length<10){
+        input+=n;
+        display();
+    }
+}
+function del(){
+    input=input.slice(0,-1);
+    display();
+}
+function clearPass(){
+    input="";
+    display();
+}
+function display(){
+    document.getElementById("display").innerText="●".repeat(input.length);
+}
+function check(){
+    if(input===correctPassword){
+        document.getElementById("lock").classList.add("hidden");
+        document.getElementById("cakePage").classList.remove("hidden");
+        createCandles();
+    }else{
+        alert("รหัสไม่ถูก 😝");
+        clearPass();
+    }
+}
+
+/* CAKE */
+let lit=0;
+function createCandles(){
+    const cake=document.getElementById("cake");
+    for(let i=0;i<5;i++){
+        const c=document.createElement("div");
+        c.className="candle";
+        c.style.left=30+i*35+"px";
+        c.onclick=()=>light(c);
+        cake.appendChild(c);
+    }
+}
+function light(c){
+    if(!c.querySelector(".flame")){
+        const f=document.createElement("div");
+        f.className="flame";
+        c.appendChild(f);
+        lit++;
+        if(lit===5){
+            setTimeout(showLove,800);
+        }
+    }
+}
+
+/* LOVE MESSAGE */
+const msg =
+"สุขสันต์วันเกิดนะที่รัก 💕🎂\n\n"+
+"วันนี้เป็นวันที่พิเศษมาก ๆ\n"+
+"เพราะเป็นวันที่คนพิเศษที่สุดของเค้าเกิดมา\n\n"+
+"ขอบคุณนะ ที่เข้ามาเป็นรอยยิ้มของเค้า\n"+
+"เป็นความสบายใจ เป็นกำลังใจ\n"+
+"และเป็นความสุขในทุก ๆ วัน\n\n"+
+"ไม่ว่าจะเจอเรื่องดีหรือเรื่องเหนื่อย\n"+
+"ขอให้เธอจำไว้ว่ายังมีเค้าอยู่ตรงนี้เสมอ\n"+
+"พร้อมจับมือเธอไปด้วยกันทุกทาง\n\n"+
+"ขอให้ปีนี้เป็นปีที่เต็มไปด้วยรอยยิ้ม\n"+
+"สุขภาพแข็งแรง สมหวังในทุกสิ่งที่ตั้งใจ\n"+
+"เจอแต่เรื่องดี ๆ และคนดี ๆ รอบตัว\n\n"+
+"ถ้าวันไหนเหนื่อย อย่าลืมพัก\n"+
+"ถ้าวันไหนท้อ อย่าลืมว่ามีเค้าคอยซัพพอร์ต\n\n"+
+"สุดท้ายนี้...\n"+
+"ขอให้เธอมีความสุขมาก ๆ ในทุกวัน\n"+
+"และขอให้เค้าได้อยู่ข้าง ๆ เธอแบบนี้\n"+
+"ไปอีกนานแสนนานเลยนะ 🥰💖";
+
+let i=0;
+function showLove(){
+    document.getElementById("cakePage").classList.add("hidden");
+    document.getElementById("lovePage").classList.remove("hidden");
+    type();
+}
+function type(){
+    if(i<msg.length){
+        document.getElementById("text").innerHTML+=
+        msg[i]==="\n"?"<br>":msg[i];
+        i++;
+        setTimeout(type,40);
+    }
+}
+
+/* HEART */
+setInterval(()=>{
+    const h=document.createElement("div");
+    h.className="heart";
+    h.innerHTML="💖";
+    h.style.left=Math.random()*100+"vw";
+    h.style.bottom="0";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),6000);
+},300);
+</script>
+
 </body>
 </html>
